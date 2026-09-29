@@ -154,10 +154,10 @@
     if [ ! -d "$END4_DIR/.git" ]; then
       $DRY_RUN_CMD ${pkgs.git}/bin/git init "$END4_DIR"
       $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" remote add origin https://github.com/pctrade/end4-pC.git
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" fetch --depth 1 origin "$END4_PIN"
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" fetch --depth 1 origin "$END4_PIN" || true
       $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" reset --hard FETCH_HEAD
     elif [ "$(${pkgs.git}/bin/git -C "$END4_DIR" rev-parse HEAD 2>/dev/null)" != "$END4_PIN" ]; then
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" fetch --depth 1 origin "$END4_PIN"
+      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" fetch --depth 1 origin "$END4_PIN" || true
       $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" reset --hard "$END4_PIN"
     fi
     sed -i "s/primary_paletteKeyColor/primaryPaletteKeyColor/" "$END4_DIR/scripts/colors/generate_colors_material.py"
