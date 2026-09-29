@@ -191,6 +191,11 @@ in
   enable = true;
   package = pkgs.postgresql_18;
   };
+
+  services.mysql = {
+    enable = true;
+    package = pkgs.mariadb;
+  };
   nixpkgs.overlays = [
     (final: prev: {
       python3 = prev.python3.override {
