@@ -675,6 +675,7 @@
     just
     direnv
     nix-direnv
+    semgrep
 
     wl-clipboard
     cliphist
