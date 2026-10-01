@@ -588,6 +588,7 @@
       end4pull = "cd ~/.config/quickshell/end4-pC && git pull";
       wvid = "$HOME/.config/quickshell/end4-pC/scripts/colors/switchwall.sh --mode dark $HOME/Downloads/wallpaper.mp4 >/dev/null 2>&1";
       wpic = "$HOME/.config/quickshell/end4-pC/scripts/colors/switchwall.sh --mode dark $HOME/Downloads/pokemon.png >/dev/null 2>&1";
+      hunyuan = "cd ~/AI/Hunyuan3D-2.1 && nix-shell --run 'source ~/.venv-hunyuan/bin/activate && python gradio_app.py --model_path tencent/Hunyuan3D-2.1 --subfolder hunyuan3d-dit-v2-1'";
     };
 
     profileExtra = ''
