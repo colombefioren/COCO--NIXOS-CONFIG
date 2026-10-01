@@ -20,6 +20,10 @@ in
     ./hardware-configuration.nix
   ];
 
+  # 16G swap for memory-heavy local workloads.
+  # The file is created manually: dd if=/dev/zero of=/swapfile bs=1M count=16384 && mkswap /swapfile
+  swapDevices = [ { device = "/swapfile"; size = 16384; } ];
+
   # If home-manager activation finds a colliding file (e.g. the upstream fish
   # config), move it aside with this suffix instead of aborting, so the
   # home-manager-cocofioren.service succeeds at login.
