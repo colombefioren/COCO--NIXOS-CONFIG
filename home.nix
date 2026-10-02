@@ -190,6 +190,14 @@
     fi
   '';
 
+  # freebuff is not packaged in nixpkgs; install it via npm into ~/.local
+  # (npm's global prefix is ~/.local, set in ~/.npmrc, so it survives rebuilds).
+  home.activation.installFreebuff = lib.hm.dag.entryAfter [ "installOpenCode" ] ''
+    if ! command -v freebuff >/dev/null 2>&1 && ! [ -x "$HOME/.local/bin/freebuff" ]; then
+      ${pkgs.nodejs}/bin/npm install -g freebuff --prefix "$HOME/.local"
+    fi
+  '';
+
   # Boot the graphical-session.target at login. xdg-desktop-portal won't start
   # otherwise (Requisite=graphical-session.target), which breaks OBS screen
   # capture and app screen-share. graphical-session.target refuses manual
@@ -387,6 +395,7 @@
     XCURSOR_THEME = "pikachu-cursor";
     XCURSOR_SIZE = "32";
     OPENCODE_DISABLE_AUTOUPDATE = "true";
+    COPILOT_ALLOW_ALL = "true";
   };
 
   home.sessionPath = [
