@@ -108,6 +108,8 @@ in
 
     util-linux parted gptfdisk
 
+    samba
+
     man man-pages
   ];
 
