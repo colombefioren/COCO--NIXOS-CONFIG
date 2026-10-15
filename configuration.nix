@@ -90,7 +90,7 @@ in
 
     john hashcat gnupg age
 
-    binwalk exiftool foremost sleuthkit testdisk libewf
+    binwalk exiftool foremost sleuthkit testdisk libewf steghide
 
     wireshark
 
