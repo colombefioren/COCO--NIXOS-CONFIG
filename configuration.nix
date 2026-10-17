@@ -14,6 +14,28 @@ let
       sed -i "s,^ScriptFile=.*,ScriptFile=$themedir/polishcow.script," "$themedir/polishcow.plymouth"
     '';
   };
+  # cupp (Common User Passwords Profiler) is not in nixpkgs; build it from the
+  # upstream repo pinned to a master commit (no releases are tagged). cupp loads
+  # cupp.cfg from its own directory via realpath(__file__), so both files live in
+  # share/cupp and a wrapper runs the script with python3.
+  cupp = pkgs.stdenvNoCC.mkDerivation {
+    pname = "cupp";
+    version = "3.3.0-unstable-2024-05-08";
+    src = pkgs.fetchFromGitHub {
+      owner = "Mebus";
+      repo = "cupp";
+      rev = "b77f1ae66c10ab2d0fa09c67017949fb5ba187aa";
+      hash = "sha256-eNE8DUFtFFEfBsm3TrL3GcnBXPQ7x0kfzZHH49Jqy5w=";
+    };
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    dontBuild = true;
+    installPhase = ''
+      mkdir -p "$out/share/cupp"
+      cp cupp.py cupp.cfg "$out/share/cupp/"
+      makeWrapper ${pkgs.python3}/bin/python3 "$out/bin/cupp" \
+        --add-flags "$out/share/cupp/cupp.py"
+    '';
+  };
 in
 {
   imports = [
@@ -88,7 +110,7 @@ in
     nmap socat tcpdump traceroute iproute2 dnsutils whois openssl inetutils
     gobuster ffuf nikto sqlmap httpie
 
-    john hashcat gnupg age
+    john hashcat gnupg age cupp
 
     binwalk exiftool foremost sleuthkit testdisk libewf steghide
 
