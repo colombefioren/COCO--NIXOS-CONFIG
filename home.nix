@@ -106,9 +106,8 @@
       },
     })
 
-    -- New window on a workspace with a maximized one: unmaximize it and tile both.
-    -- On Hyprland 0.56 the shell default (2) hands the maximize over to the new window instead.
-    hl.config({ misc = { on_focus_under_fullscreen = 1 } })
+    -- Kitty asks to be maximized when it opens next to a maximized window; ignore that so it tiles.
+    hl.window_rule({ match = { class = "^(kitty)$" }, suppress_event = "maximize" })
 
     -- Brave: full opacity when active, like every other window when inactive
     hl.window_rule({ match = { class = "^(brave-browser)$" }, opacity = "1 0.8" })
