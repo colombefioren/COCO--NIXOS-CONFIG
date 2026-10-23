@@ -88,7 +88,7 @@ in
   boot.initrd.verbose = false;
 
   environment.systemPackages = with pkgs; [
-    git wget vim curl foot hyprpaper kitty waybar neovim nodejs python3
+    git wget vim curl foot hyprpaper kitty waybar neovim nodejs-bin python3
     lua5_1 luarocks gcc gnumake unzip rofi hyprlock hypridle grim slurp
     wl-clipboard cliphist tree-sitter ripgrep lazygit gh opencode
 
@@ -225,6 +225,32 @@ in
     package = pkgs.mariadb;
   };
   nixpkgs.overlays = [
+    # nixpkgs still ships Node.js 24.21.0, which has the Brotli decoder remote
+    # code execution (CVE-2026-111497) fixed in the 24.22.1 security release.
+    # Until nixpkgs catches up, use the official prebuilt binaries patched for
+    # NixOS; the hash matches https://nodejs.org/dist/v24.22.1/SHASUMS256.txt.
+    # Drop this overlay and go back to nodejs once nixpkgs has 24.22.1 or later.
+    (final: prev: {
+      nodejs-bin = final.stdenv.mkDerivation (finalAttrs: {
+        pname = "nodejs-bin";
+        version = "24.22.1";
+        src = final.fetchurl {
+          url = "https://nodejs.org/dist/v${finalAttrs.version}/node-v${finalAttrs.version}-linux-x64.tar.xz";
+          hash = "sha256-bBcqmrZxj3uAH7WnvUhq8u5eMnWAhqBLhPzOKqdwleY=";
+        };
+        nativeBuildInputs = [ final.autoPatchelfHook ];
+        buildInputs = [ final.stdenv.cc.cc.lib ];
+        installPhase = ''
+          mkdir -p "$out"
+          cp -r bin include lib share "$out/"
+        '';
+        # npm, npx and corepack start with "#!/usr/bin/env node": point them at this node
+        preFixup = ''
+          export HOST_PATH="$out/bin:$HOST_PATH"
+        '';
+        meta.mainProgram = "node";
+      });
+    })
     (final: prev: {
       python3 = prev.python3.override {
         packageOverrides = pyFinal: pyPrev: {

@@ -197,7 +197,7 @@
   # (npm's global prefix is ~/.local, set in ~/.npmrc, so it survives rebuilds).
   home.activation.installFreebuff = lib.hm.dag.entryAfter [ "installOpenCode" ] ''
     if ! command -v freebuff >/dev/null 2>&1 && ! [ -x "$HOME/.local/bin/freebuff" ]; then
-      ${pkgs.nodejs}/bin/npm install -g freebuff --prefix "$HOME/.local"
+      ${pkgs.nodejs-bin}/bin/npm install -g freebuff --prefix "$HOME/.local"
     fi
   '';
 
@@ -665,7 +665,7 @@
     maven
     gradle
 
-    nodejs
+    nodejs-bin
     typescript
     typescript-language-server
     bun
