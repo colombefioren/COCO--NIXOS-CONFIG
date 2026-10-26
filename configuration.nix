@@ -94,6 +94,8 @@ in
 
     awww
 
+    whatsapp-electron
+
     adwaita-icon-theme
     hicolor-icon-theme
     papirus-icon-theme
