@@ -38,6 +38,23 @@
         "url": "https://github.com/end-4/dots-hyprland"
       }
     },
+    "end4-pC": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788746555,
+        "narHash": "sha256-2X6PQOG6XYTjJ/bNx9ie226tsJTX33j3bsE2NAdX+zo=",
+        "owner": "pctrade",
+        "repo": "end4-pC",
+        "rev": "f1fb69c6f3f2727e5cd73223a8f56525125565ea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pctrade",
+        "repo": "end4-pC",
+        "rev": "f1fb69c6f3f2727e5cd73223a8f56525125565ea",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -149,11 +166,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778488696,
-        "narHash": "sha256-QSWgYuZUCNUJ/cxmaq83WkcT7lHQDDfsPVgH+96kIl0=",
+        "lastModified": 1792651682,
+        "narHash": "sha256-TiCGqLMpNIy7FERewgfKVluPsLVF96uc6x6xwZnMjdQ=",
         "ref": "refs/heads/master",
-        "rev": "7d1c9a9c6721606b129829134d6f614f015621e2",
-        "revCount": 818,
+        "rev": "9b0f339b19057f4731bf3b48293307d7ef241671",
+        "revCount": 879,
         "type": "git",
         "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
       },
@@ -165,6 +182,7 @@
     "root": {
       "inputs": {
         "areofyl-fetch": "areofyl-fetch",
+        "end4-pC": "end4-pC",
         "home-manager": "home-manager",
         "illogical-flake": "illogical-flake",
         "nixpkgs": "nixpkgs",

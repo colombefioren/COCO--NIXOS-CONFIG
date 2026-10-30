@@ -117,7 +117,7 @@ in
 
     wireshark
 
-    ghidra radare2 cutter
+    ghidra radare2
 
     gdb lldb cmake pkg-config patchelf checksec elfutils strace ltrace valgrind rr
 
@@ -193,7 +193,7 @@ in
 
   xdg.portal = {
     enable = true;
-    extraPortals = with pkgs; [ xdg-desktop-portal-hyprland xdg-desktop-portal-gtk ];
+    extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
     config = {
       common = {
         default = [ "hyprland" "gtk" ];
