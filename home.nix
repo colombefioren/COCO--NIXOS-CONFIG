@@ -4,9 +4,22 @@
   pkgs,
   zen-browser,
   spicetify-nix,
+  end4-pC,
   ...
 }:
 
+let
+  # end4-pC source (pinned flake input) with our local fixes baked in at build time.
+  end4pCPatched = pkgs.applyPatches {
+    name = "end4-pC-patched";
+    src = end4-pC;
+    postPatch = ''
+      sed -i "s/primary_paletteKeyColor/primaryPaletteKeyColor/" scripts/colors/generate_colors_material.py
+      sed -i 's|const cropBase = `magick |const cropBase = `magick png:|' modules/common/utils/ScreenshotAction.qml
+      sed -i '/function screenshot() {/,/^    }/ s/if (Persistent.states.record.enable) {/{/' modules/ii/regionSelector/RegionSelector.qml
+    '';
+  };
+in
 {
   home.username = "cocofioren";
   home.homeDirectory = "/home/cocofioren";
@@ -151,23 +164,15 @@
         fi
   '';
 
+  # copyIllogicalImpulseConfigs wipes ~/.config/quickshell on every activation, so
+  # restore end4-pC from the store each time. A writable copy (not a symlink) keeps
+  # the old runtime behaviour; no network is needed since the source is prebuilt.
   home.activation.installEnd4pC = lib.hm.dag.entryAfter [ "copyIllogicalImpulseConfigs" ] ''
     END4_DIR="$HOME/.config/quickshell/end4-pC"
-    END4_PIN=f1fb69c6f3f2727e5cd73223a8f56525125565ea
-    if [ ! -d "$END4_DIR/.git" ]; then
-      $DRY_RUN_CMD ${pkgs.git}/bin/git init "$END4_DIR"
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" remote add origin https://github.com/pctrade/end4-pC.git
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" fetch --depth 1 origin "$END4_PIN" || true
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" reset --hard FETCH_HEAD
-    elif [ "$(${pkgs.git}/bin/git -C "$END4_DIR" rev-parse HEAD 2>/dev/null)" != "$END4_PIN" ]; then
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" fetch --depth 1 origin "$END4_PIN" || true
-      $DRY_RUN_CMD ${pkgs.git}/bin/git -C "$END4_DIR" reset --hard "$END4_PIN"
-    fi
-    sed -i "s/primary_paletteKeyColor/primaryPaletteKeyColor/" "$END4_DIR/scripts/colors/generate_colors_material.py"
-    if ! grep -q 'magick png:' "$END4_DIR/modules/common/utils/ScreenshotAction.qml" 2>/dev/null; then
-      sed -i 's|const cropBase = `magick |const cropBase = `magick png:|' "$END4_DIR/modules/common/utils/ScreenshotAction.qml"
-    fi
-    sed -i '/function screenshot() {/,/^    }/ s/if (Persistent.states.record.enable) {/{/' "$END4_DIR/modules/ii/regionSelector/RegionSelector.qml"
+    $DRY_RUN_CMD rm -rf "$END4_DIR"
+    $DRY_RUN_CMD mkdir -p "$(dirname "$END4_DIR")"
+    $DRY_RUN_CMD cp -r ${end4pCPatched} "$END4_DIR"
+    $DRY_RUN_CMD chmod -R u+w "$END4_DIR"
   '';
 
   # Install pre-built opencode v1.18.31 to ~/.local/bin/opencode (takes
@@ -597,7 +602,6 @@
       nbuild = "sudo nixos-rebuild dry-build --flake /etc/nixos#dellillah";
       nupdate = "cd /etc/nixos && sudo nix flake update && sudo nixos-rebuild switch --flake /etc/nixos#dellillah && git add flake.lock && git commit -m 'chore: update flake.lock' && git push";
       empryo = "~/.empryo/bin/empryo";
-      end4pull = "cd ~/.config/quickshell/end4-pC && git pull";
       wvid = "$HOME/.config/quickshell/end4-pC/scripts/colors/switchwall.sh --mode dark $HOME/Downloads/wallpaper.mp4 >/dev/null 2>&1";
       wpic = "$HOME/.config/quickshell/end4-pC/scripts/colors/switchwall.sh --mode dark $HOME/Downloads/pokemon.png >/dev/null 2>&1";
     };
