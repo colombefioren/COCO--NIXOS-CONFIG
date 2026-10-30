@@ -117,7 +117,7 @@ in
 
     wireshark
 
-    ghidra radare2 cutter
+    ghidra radare2
 
     gdb lldb cmake pkg-config patchelf checksec elfutils strace ltrace valgrind rr
 
