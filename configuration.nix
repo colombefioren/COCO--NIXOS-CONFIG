@@ -85,7 +85,6 @@ in
   boot.initrd.kernelModules = [ "i915" ];
   boot.kernelParams = [ "quiet" "splash" ];
   boot.consoleLogLevel = 3;
-  boot.initrd.verbose = false;
 
   environment.systemPackages = with pkgs; [
     git wget vim curl foot hyprpaper kitty waybar neovim nodejs-bin python3
