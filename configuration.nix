@@ -228,8 +228,10 @@ in
   nixpkgs.overlays = [
     # nixpkgs still ships Node.js 24.21.0, which has the Brotli decoder remote
     # code execution (CVE-2026-111497) fixed in the 24.22.1 security release.
-    # Until nixpkgs catches up, use the official prebuilt binaries patched for
-    # NixOS; the hash matches https://nodejs.org/dist/v24.22.1/SHASUMS256.txt.
+    # Until nixpkgs catches up, use the official prebuilt binaries as-is and run
+    # them through nix-ld; the hash matches https://nodejs.org/dist/v24.22.1/SHASUMS256.txt.
+    # Don't patchelf node: the rewrite leaves overlapping LOAD segments and
+    # glibc 2.44's ld.so segfaults in dl_main before node even starts.
     # Drop this overlay and go back to nodejs once nixpkgs has 24.22.1 or later.
     (final: prev: {
       nodejs-bin = final.stdenv.mkDerivation (finalAttrs: {
@@ -239,8 +241,8 @@ in
           url = "https://nodejs.org/dist/v${finalAttrs.version}/node-v${finalAttrs.version}-linux-x64.tar.xz";
           hash = "sha256-bBcqmrZxj3uAH7WnvUhq8u5eMnWAhqBLhPzOKqdwleY=";
         };
-        nativeBuildInputs = [ final.autoPatchelfHook ];
-        buildInputs = [ final.stdenv.cc.cc.lib ];
+        dontStrip = true;
+        dontPatchELF = true;
         installPhase = ''
           mkdir -p "$out"
           cp -r bin include lib share "$out/"
