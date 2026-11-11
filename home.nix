@@ -320,7 +320,7 @@ in
     fi
     WP_FILE="$HOME/.local/state/quickshell/user/generated/wallpaper/path.txt"
     if [ ! -f "$GTK4_CSS" ] && [ -f "$WP_FILE" ] && [ -f "$(cat "$WP_FILE")" ]; then
-      PATH="${lib.makeBinPath [ pkgs.matugen ]}:$PATH" $DRY_RUN_CMD matugen image "$(cat "$WP_FILE")" --mode dark >/dev/null 2>&1 || true
+      PATH="${lib.makeBinPath [ pkgs.matugen ]}:$PATH" $DRY_RUN_CMD matugen image "$(cat "$WP_FILE")" --mode dark --source-color-index 0 >/dev/null 2>&1 || true
     fi
   '';
 
