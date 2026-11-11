@@ -187,6 +187,11 @@ in
     })
   ];
 
+  fonts.fontconfig.defaultFonts = {
+    sansSerif = [ "Google Sans Flex" "DejaVu Sans" ];
+    monospace = [ "JetBrainsMono Nerd Font" "DejaVu Sans Mono" ];
+  };
+
   security.rtkit.enable = true;
 
   services.pipewire = {
