@@ -156,6 +156,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-gnome50": {
+      "locked": {
+        "lastModified": 1794165970,
+        "narHash": "sha256-XuAV2cUwaod3Bt4XFVqiXz3v1w2ex16W6Sv4S7EWres=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "ac588ef1c914865dad517b337ea0eb9694a4021c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-26.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nur": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -207,6 +223,7 @@
         "illogical-flake": "illogical-flake",
         "nixpkgs": "nixpkgs",
         "nixpkgs-brave": "nixpkgs-brave",
+        "nixpkgs-gnome50": "nixpkgs-gnome50",
         "quickshell": "quickshell",
         "spicetify-nix": "spicetify-nix",
         "zen-browser": "zen-browser"

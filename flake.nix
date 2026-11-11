@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # GNOME 50 stack (nautilus 50.4, gtk 4.22, libadwaita 1.9) for Nautilus only: the
+    # end-4 matugen stylesheet is written for libadwaita 1.9 and renders badly on 1.10.
+    nixpkgs-gnome50.url = "github:NixOS/nixpkgs/nixos-26.05";
+
     # brave was dropped from nixpkgs on 2026-11-03 (unmaintained); keep its
     # expression from the last nixpkgs that still had it and bump the .deb below.
     nixpkgs-brave.url = "github:NixOS/nixpkgs/31ecbaca1bdefa45dffc409f0250bd8039ea0010";
@@ -60,7 +64,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-brave, home-manager, illogical-flake, areofyl-fetch, zen-browser, spicetify-nix, end4-pC, ... }: {
+  outputs = { self, nixpkgs, nixpkgs-brave, nixpkgs-gnome50, home-manager, illogical-flake, areofyl-fetch, zen-browser, spicetify-nix, end4-pC, ... }: {
     nixosConfigurations.dellillah = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -70,6 +74,7 @@
           nixpkgs.overlays = [
             (final: prev: {
               brave = nixpkgs-brave.legacyPackages.x86_64-linux.brave;
+              inherit (nixpkgs-gnome50.legacyPackages.x86_64-linux) nautilus sushi file-roller;
             })
           ];
         }
