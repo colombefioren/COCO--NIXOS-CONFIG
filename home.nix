@@ -327,6 +327,10 @@ in
 
   gtk = {
     enable = true;
+    font = {
+      name = "Google Sans Flex";
+      size = 11;
+    };
     gtk3 = {
       theme = {
         name = "adw-gtk3-dark";
