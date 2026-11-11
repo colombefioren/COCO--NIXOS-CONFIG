@@ -44,6 +44,7 @@ in
     hl.unbind(mainMod .. "+RETURN")
     hl.unbind(mainMod .. "+Return")
     hl.bind(mainMod .. "+RETURN", hl.dsp.exec_cmd("kitty"))
+    hl.unbind(mainMod .. "+A")
     hl.bind(mainMod .. "+A", hl.dsp.exec_cmd("qs -c end4-pC ipc call sidebarLeft toggle"), { description = "Left sidebar" })
     hl.unbind(mainMod .. "+N")
     hl.bind(mainMod .. "+N", hl.dsp.exec_cmd("kitty -e nvim"), { description = "Neovim" })
