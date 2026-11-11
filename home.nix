@@ -3,7 +3,6 @@
   lib,
   pkgs,
   zen-browser,
-  spicetify-nix,
   end4-pC,
   ...
 }:
@@ -60,7 +59,6 @@ in
       { description = "Screenshot region" })
     hl.bind(mainMod .. "+V", hl.dsp.window.float({ action = "toggle" }))
     hl.bind(mainMod .. "+F", hl.dsp.window.fullscreen({ action = "toggle" }))
-    hl.bind(mainMod .. "+SHIFT+F", hl.dsp.exec_cmd("/home/cocofioren/.local/bin/spotify-fad-toggle"), { description = "Spotify full display toggle" })
     hl.bind(mainMod .. "+ALT+left",  hl.dsp.window.swap({ direction = "left" }))
     hl.bind(mainMod .. "+ALT+right", hl.dsp.window.swap({ direction = "right" }))
     hl.bind(mainMod .. "+ALT+up",    hl.dsp.window.swap({ direction = "up" }))
@@ -360,28 +358,6 @@ in
     recursive = true;
   };
 
-  home.file.".local/bin/spotify-fad-toggle" = {
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      # Toggle Spotify's Full App Display (glass album-art player) from anywhere.
-      # Focuses Spotify, sends its built-in Alt+F hotkey, then restores focus.
-
-      if ! pgrep -f "share/spotify/spotify" >/dev/null 2>&1; then
-        spotify >/dev/null 2>&1 & disown
-        sleep 3
-      fi
-
-      hyprctl dispatch focuswindow "class:spotify" >/dev/null 2>&1
-      sleep 0.4
-      CLASS=$(hyprctl activewindow -j 2>/dev/null | jq -r '.class // empty' 2>/dev/null)
-      if [[ "$CLASS" == "spotify" || "$CLASS" == "Spotify" ]]; then
-        wtype -M alt -k f
-      fi
-      hyprctl dispatch focuscurrentorlast >/dev/null 2>&1
-    '';
-  };
-
   home.sessionVariables = {
     XCURSOR_THEME = "pikachu-cursor";
     XCURSOR_SIZE = "32";
@@ -413,127 +389,6 @@ in
     labelColor = "cyan";
     speed = 1.0;
   };
-
-  programs.spicetify =
-    let
-      spicePkgs = spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-    in
-    {
-      enable = true;
-      theme = spicePkgs.themes.dribbblish // {
-        additionalCss = ''
-          /* ---- glassmorphism panels (mirror your kitty glass) ---- */
-          .Root,
-          .main-background,
-          .main-container,
-          .main-background-divider,
-          .main-topBar-background,
-          .now-playing-bar,
-          .main-bar-column,
-          .main-bar-content,
-          .sidebar-container,
-          .sidebar,
-          .main-kva-window,
-          .main-tabBar,
-          .main-card,
-          .main-cardMainActions,
-          .main-actionable-item-grabArea,
-          .main-listRow:hover,
-          .main-listRow:active,
-          .main-detailHeaderGradient,
-          .page,
-          .main-tile,
-          .main-topBar-topbarViewport,
-          .main-topBar-topbarContent,
-          .main-topBar-topbarContentRight,
-          .main-userWidget-box,
-          .main-navBar,
-          .main-navBarNav,
-          .main-navLink,
-          .main-globalNav-container,
-          .main-albumArtCard,
-          .main-albumArtCardDefault,
-          .main-artistArtCard,
-          .main-addButton,
-          .main-nowPlayingBar,
-          aside.main-alternativeModes,
-          .lyrics-lyrics-background,
-          .main-lyricsCinema-controls,
-          #lyrics-backdrop,
-          #lyrics-backdrop-container {
-            background: rgba(18, 22, 28, 0.55) !important;
-            backdrop-filter: blur(10px) saturate(120%) !important;
-            -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
-          }
-          /* ---- lyric backdrop: soft glass glow instead of flat black ---- */
-          .lyrics-lyrics-background {
-            background: radial-gradient(
-                ellipse at 50% 18%,
-                rgba(148, 151, 155, 0.28),
-                rgba(148, 151, 155, 0.07) 52%,
-                rgba(6, 7, 9, 0.6) 100%
-              ) !important;
-          }
-          .lyrics-lyrics-background,
-          .lyrics-lyrics-container {
-            --lyrics-color-background: transparent !important;
-          }
-          .lyrics-lyrics-container {
-            --lyrics-color-active: rgba(255, 255, 255, 0.96) !important;
-            --lyrics-color-inactive: rgba(255, 255, 255, 0.42) !important;
-            --lyrics-color-passed: rgba(255, 255, 255, 0.78) !important;
-            --lyrics-color-messaging: rgba(255, 255, 255, 0.5) !important;
-          }
-          #lyrics-backdrop,
-          #lyrics-backdrop-container {
-            background: radial-gradient(
-                ellipse at 50% 25%,
-                rgba(148, 151, 155, 0.3),
-                transparent 65%
-              ), rgba(8, 9, 12, 0.5) !important;
-            backdrop-filter: blur(40px) saturate(150%) !important;
-            -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
-          }
-          /* ---- card-like glass popups ---- */
-          .main-topBar-topbarContentRight button:has(img),
-          .main-userWidget-box[data-testid="user-widget-link"] {
-            background: rgba(40, 52, 62, 0.85) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-          }
-          /* ---- unobtrusive dividers ---- */
-          .main-background-divider {
-            background: rgba(255, 255, 255, 0.06) !important;
-          }
-          .main-listRow-headerBackground {
-            background: rgba(255, 255, 255, 0.03) !important;
-          }
-        '';
-      };
-      customColorScheme = {
-        text = "E0E0E0";
-        subtext = "ABABAB";
-        main = "121216";
-        sidebar = "1A1A1E";
-        player = "17171B";
-        card = "202024";
-        shadow = "000000";
-        selected-row = "3A3D42";
-        button = "787C81";
-        button-active = "989BA0";
-        button-disabled = "464950";
-        tab-active = "8C8F94";
-        notification = "202024";
-        notification-error = "C85A5A";
-        misc = "D6D6D8";
-        highlight = "C8CACC";
-      };
-      enabledExtensions = with spicePkgs.extensions; [
-        adblock
-        hidePodcasts
-        fullAppDisplay
-      ];
-    };
 
   dconf = {
     enable = true;
@@ -700,7 +555,7 @@ in
     celluloid
     obs-studio
 
-    spicetify-cli
+    spotify
 
     pavucontrol
     playerctl
