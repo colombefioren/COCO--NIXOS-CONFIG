@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # brave was dropped from nixpkgs on 2026-11-03 (unmaintained); keep its
+    # expression from the last nixpkgs that still had it and bump the .deb below.
+    nixpkgs-brave.url = "github:NixOS/nixpkgs/31ecbaca1bdefa45dffc409f0250bd8039ea0010";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,6 +15,22 @@
 
     illogical-flake = {
       url = "github:shuntia/illogical-flake";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        dotfiles.follows = "dotfiles";
+        quickshell.follows = "quickshell";
+      };
+    };
+
+    # end-4 dotfiles and quickshell tracked directly so `nix flake update` moves
+    # them; illogical-flake otherwise keeps its own stale pins of both.
+    dotfiles = {
+      url = "git+https://github.com/end-4/dots-hyprland?submodules=1";
+      flake = false;
+    };
+
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/quickshell/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -35,16 +55,24 @@
     # end4-pC quickshell config, pinned to an exact commit so `nix flake update`
     # never moves it; bump the rev here to upgrade.
     end4-pC = {
-      url = "github:pctrade/end4-pC/f1fb69c6f3f2727e5cd73223a8f56525125565ea";
+      url = "github:pctrade/end4-pC/8135351525a916778bc3ead276a85095c6c1e59b";
       flake = false;
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, illogical-flake, areofyl-fetch, zen-browser, spicetify-nix, end4-pC, ... }: {
+  outputs = { self, nixpkgs, nixpkgs-brave, home-manager, illogical-flake, areofyl-fetch, zen-browser, spicetify-nix, end4-pC, ... }: {
     nixosConfigurations.dellillah = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./configuration.nix
+
+        {
+          nixpkgs.overlays = [
+            (final: prev: {
+              brave = nixpkgs-brave.legacyPackages.x86_64-linux.brave;
+            })
+          ];
+        }
 
         home-manager.nixosModules.home-manager
         {

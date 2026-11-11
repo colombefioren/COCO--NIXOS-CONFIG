@@ -257,9 +257,8 @@ in
     (final: prev: {
       python3 = prev.python3.override {
         packageOverrides = pyFinal: pyPrev: {
-          kde-material-you-colors = pyPrev.kde-material-you-colors.overridePythonAttrs (old: {
-            propagatedBuildInputs = (old.propagatedBuildInputs or [ ]) ++ [ pyFinal.python-magic ];
-          });
+          # nixpkgs now ships it as a top-level package (python-magic included); illogical-flake still looks it up in the python set.
+          kde-material-you-colors = prev.kde-material-you-colors;
         };
       };
       python3Packages = final.python3.pkgs;
