@@ -171,6 +171,20 @@ in
     rubik
     nerd-fonts.ubuntu
     nerd-fonts.jetbrains-mono
+    # Families the end-4 shell config asks for; without them everything falls back to DejaVu.
+    (google-fonts.override { fonts = [ "SpaceGrotesk" "ReadexPro" ]; })
+    # Google Sans Flex is newer than the nixpkgs google-fonts snapshot, so fetch the file from upstream.
+    (stdenvNoCC.mkDerivation {
+      pname = "google-sans-flex";
+      version = "0-unstable-2026-11-11";
+      src = fetchurl {
+        name = "GoogleSansFlex.ttf";
+        url = "https://raw.githubusercontent.com/google/fonts/5bb28733cec313b63fbd415b574b5ae35c8aa8b8/ofl/googlesansflex/GoogleSansFlex%5BROND%2Copsz%2Cslnt%2Cwdth%2Cwght%5D.ttf";
+        hash = "sha256-qax3B5iFfV6KxZPO1Csi5Ap8CM7Jgxn5Kw7Mwng6d7o=";
+      };
+      dontUnpack = true;
+      installPhase = "install -Dm444 $src $out/share/fonts/truetype/GoogleSansFlex.ttf";
+    })
   ];
 
   security.rtkit.enable = true;
