@@ -59,6 +59,7 @@ in
       { description = "Screenshot region" })
     hl.bind(mainMod .. "+V", hl.dsp.window.float({ action = "toggle" }))
     hl.bind(mainMod .. "+F", hl.dsp.window.fullscreen({ action = "toggle" }))
+    hl.bind(mainMod .. "+SHIFT+F", hl.dsp.exec_cmd("sh -c 'hyprctl clients | grep -q \"class: spotify\" && hyprctl dispatch focuswindow class:spotify || spotify'"), { description = "Spotify: open or focus" })
     hl.bind(mainMod .. "+ALT+left",  hl.dsp.window.swap({ direction = "left" }))
     hl.bind(mainMod .. "+ALT+right", hl.dsp.window.swap({ direction = "right" }))
     hl.bind(mainMod .. "+ALT+up",    hl.dsp.window.swap({ direction = "up" }))
