@@ -329,7 +329,7 @@ in
     enable = true;
     font = {
       name = "Google Sans Flex";
-      size = 14;
+      size = 11;
     };
     gtk3 = {
       theme = {
