@@ -51,6 +51,11 @@
       };
     };
 
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # end4-pC quickshell config, pinned to an exact commit so `nix flake update`
     # never moves it; bump the rev here to upgrade.
     end4-pC = {
@@ -59,7 +64,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-brave, nixpkgs-gnome50, home-manager, illogical-flake, areofyl-fetch, zen-browser, end4-pC, ... }: {
+  outputs = { self, nixpkgs, nixpkgs-brave, nixpkgs-gnome50, home-manager, illogical-flake, areofyl-fetch, zen-browser, spicetify-nix, end4-pC, ... }: {
     nixosConfigurations.dellillah = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -79,12 +84,13 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
 
-          home-manager.extraSpecialArgs = { inherit zen-browser end4-pC; };
+          home-manager.extraSpecialArgs = { inherit zen-browser spicetify-nix end4-pC; };
 
           home-manager.users.cocofioren = {
             imports = [
               illogical-flake.homeManagerModules.default
               areofyl-fetch.homeManagerModules.default
+              spicetify-nix.homeManagerModules.default
               ./home.nix
             ];
           };
