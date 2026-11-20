@@ -645,6 +645,8 @@ in
 
     uv
 
+    jetbrains.idea
+
     php84Symfony
     php84Symfony.packages.composer
     symfony-cli
