@@ -649,8 +649,8 @@ in
     php84Symfony.packages.composer
     symfony-cli
 
-    jdk17
-    maven
+    jdk21
+    (maven.override { jdk_headless = jdk21; })
     gradle
 
     nodejs-bin
