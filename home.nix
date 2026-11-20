@@ -9,6 +9,13 @@
 }:
 
 let
+  # php 8.4 plus the Symfony extras missing from nixpkgs' default extension set
+  # (pdo_pgsql, intl, mbstring, xml, curl, zip, opcache, sodium are already on).
+  # Composer is bound to this same php.
+  php84Symfony = pkgs.php84.withExtensions (
+    { enabled, all }: enabled ++ [ all.apcu all.xsl ]
+  );
+
   # end4-pC source (pinned flake input) with our local fixes baked in at build time.
   end4pCPatched = pkgs.applyPatches {
     name = "end4-pC-patched";
@@ -637,6 +644,10 @@ in
     ninja
 
     uv
+
+    php84Symfony
+    php84Symfony.packages.composer
+    symfony-cli
 
     jdk17
     maven
