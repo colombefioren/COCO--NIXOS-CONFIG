@@ -163,13 +163,13 @@ in
 
   virtualisation.docker.enable = true;
 
-  # Dev PostgreSQL in a docker container, reachable on localhost only.
+  # Dev PostgreSQL in a docker container, reachable on localhost:5433 only (5432 is taken by services.postgresql).
   # Data persists in /var/lib/postgres-dev. Credentials are for local dev only.
   virtualisation.oci-containers = {
     backend = "docker";
     containers.postgres-dev = {
       image = "postgres:17";
-      ports = [ "127.0.0.1:5432:5432" ];
+      ports = [ "127.0.0.1:5433:5432" ];
       volumes = [ "/var/lib/postgres-dev:/var/lib/postgresql/data" ];
       environment = {
         POSTGRES_USER = "app";
