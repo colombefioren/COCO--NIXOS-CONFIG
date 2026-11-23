@@ -145,6 +145,9 @@ in
   services.getty.autologinUser = "cocofioren";
   programs.nix-ld.enable = true;
   programs.zsh.enable = true;
+  # Link fish's vendor_conf.d into user profiles so the zsh-parity fish config
+  # from home.nix is loaded (programs.fish.enable would add this, but it's off).
+  environment.pathsToLink = [ "/share/fish" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   networking.networkmanager.enable = true;
