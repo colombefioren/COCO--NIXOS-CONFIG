@@ -190,20 +190,28 @@ in
   # server error" on every message. The nixpkgs source build has a
   # version-dependent node_modules hash that prevents simple overrideAttrs,
   # so we ship the upstream pre-built binary instead.
+  #
+  # The activation PATH is minimal (no tar/gzip), so the tools are pinned here.
+  # The install runs in a subshell whose failure only warns: an offline boot or
+  # a bad download must never abort the rest of the home-manager activation
+  # (that leaves end-4's kitty.conf in place, which starts fish instead of zsh).
   home.activation.installOpenCode = lib.hm.dag.entryAfter [ "writeMyHyprKeybinds" ] ''
     OC_URL="https://github.com/anomalyco/opencode/releases/download/v1.18.31/opencode-linux-x64.tar.gz"
     OC_SHA256="e9312be75ed803b7415fc2aeabda1f4fe938912a39673762dc0c38c0e11ebde4"
     OC_BIN="$HOME/.local/bin/opencode"
 
     if ! [ "$("$OC_BIN" --version 2>/dev/null)" = "1.18.31" ]; then
-      mkdir -p "$HOME/.local/bin"
-      tmp="$(mktemp -d)"
-      ${pkgs.curl}/bin/curl -sSL "$OC_URL" -o "$tmp/opencode.tar.gz"
-      echo "$OC_SHA256  $tmp/opencode.tar.gz" | ${pkgs.coreutils}/bin/sha256sum -c -
-      tar xzf "$tmp/opencode.tar.gz" -C "$tmp"
-      cp "$tmp/opencode" "$OC_BIN"
-      chmod +x "$OC_BIN"
-      rm -rf "$tmp"
+      (
+        set -e
+        export PATH="${lib.makeBinPath [ pkgs.gnutar pkgs.gzip pkgs.coreutils pkgs.curl ]}:$PATH"
+        mkdir -p "$HOME/.local/bin"
+        tmp="$(mktemp -d)"
+        trap 'rm -rf "$tmp"' EXIT
+        curl -fsSL "$OC_URL" -o "$tmp/opencode.tar.gz"
+        echo "$OC_SHA256  $tmp/opencode.tar.gz" | sha256sum -c -
+        tar xzf "$tmp/opencode.tar.gz" -C "$tmp"
+        install -m 755 "$tmp/opencode" "$OC_BIN"
+      ) || echo "warning: opencode v1.18.31 install failed; skipping" >&2
     fi
   '';
 
