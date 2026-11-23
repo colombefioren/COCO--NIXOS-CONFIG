@@ -26,6 +26,44 @@ let
       sed -i '/function screenshot() {/,/^    }/ s/if (Persistent.states.record.enable) {/{/' modules/ii/regionSelector/RegionSelector.qml
     '';
   };
+
+  # Fish fallback with the same setup as zsh: session env, PATH, aliases,
+  # zoxide/fzf, matugen colours and the fetch animation. starship is already
+  # set up by end-4's config.fish. Shipped as a vendor_conf.d package because
+  # copyIllogicalImpulseConfigs wipes ~/.config/fish on every activation.
+  # Env vars, sessionPath and aliases are generated from the zsh/home-manager
+  # options, so they stay in sync.
+  fishZshParity = pkgs.writeTextDir "share/fish/vendor_conf.d/zsh-parity.fish" ''
+    ${lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (
+        name: value: "set -gx ${name} ${lib.escapeShellArg (toString value)}"
+      ) config.home.sessionVariables
+    )}
+
+    ${lib.concatMapStringsSep "\n" (p: ''fish_add_path --global --path --append "${p}"'') config.home.sessionPath}
+    fish_add_path --global --path --move "$HOME/.local/bin"
+
+    if status is-interactive
+        for seq_file in ~/.cache/matugen/sequences ~/.cache/wal/sequences ~/.cache/wallust/sequences
+            test -f $seq_file; and command cat $seq_file
+        end
+
+        set -g fish_color_autosuggestion brblack --bold
+
+        ${lib.concatStringsSep "\n    " (
+          lib.mapAttrsToList (
+            name: value: "alias ${name} ${lib.escapeShellArg value}"
+          ) config.programs.zsh.shellAliases
+        )}
+
+        ${pkgs.zoxide}/bin/zoxide init fish | source
+        ${pkgs.fzf}/bin/fzf --fish | source
+
+        if command -q fetch; and isatty stdout; and set -q WAYLAND_DISPLAY
+            fetch
+        end
+    end
+  '';
 in
 {
   home.username = "cocofioren";
@@ -618,6 +656,7 @@ in
     btop
     yazi
     fish
+    fishZshParity
     lazygit
     fastfetch
     fzf
