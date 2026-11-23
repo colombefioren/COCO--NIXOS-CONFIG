@@ -133,6 +133,11 @@ in
     for i = 1, 10 do
       hl.bind(mainMod .. "+F" .. i, hl.dsp.window.move({ workspace = tostring(i), follow = true }))
     end
+    -- Without Fn the Dell F-row sends media keys (F1 mute, F2/F3 volume), so mirror
+    -- SUPER+F1..F3 on those keysyms: moving a window then works in either Fn mode.
+    for i, key in ipairs({ "XF86AudioMute", "XF86AudioLowerVolume", "XF86AudioRaiseVolume" }) do
+      hl.bind(mainMod .. "+" .. key, hl.dsp.window.move({ workspace = tostring(i), follow = true }))
+    end
     LUAEOF
         chmod u+w "$HOME/.config/hypr/custom/keybinds.lua"
 
