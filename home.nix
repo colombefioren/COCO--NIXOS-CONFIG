@@ -419,6 +419,12 @@ in
     recursive = true;
   };
 
+  # Gradle cannot auto-detect JDKs in the nix store, so point toolchain lookup at jdk21
+  home.file.".gradle/gradle.properties".text = ''
+    org.gradle.java.installations.paths=${pkgs.jdk21}/lib/openjdk
+    org.gradle.java.installations.auto-download=false
+  '';
+
   home.sessionVariables = {
     XCURSOR_THEME = "pikachu-cursor";
     XCURSOR_SIZE = "32";
