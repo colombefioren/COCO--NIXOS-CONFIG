@@ -64,6 +64,12 @@ let
         end
     end
   '';
+
+  # JDKs Gradle may pick for toolchains; add a version here to make it discoverable
+  gradleJdks = [
+    pkgs.jdk17
+    pkgs.jdk21
+  ];
 in
 {
   home.username = "cocofioren";
@@ -419,9 +425,9 @@ in
     recursive = true;
   };
 
-  # Gradle cannot auto-detect JDKs in the nix store, so point toolchain lookup at jdk21
+  # Gradle cannot auto-detect JDKs in the nix store, so point toolchain lookup at gradleJdks
   home.file.".gradle/gradle.properties".text = ''
-    org.gradle.java.installations.paths=${pkgs.jdk21}/lib/openjdk
+    org.gradle.java.installations.paths=${lib.concatMapStringsSep "," (jdk: "${jdk}/lib/openjdk") gradleJdks}
     org.gradle.java.installations.auto-download=false
   '';
 
