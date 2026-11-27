@@ -256,6 +256,7 @@ in
     };
   };
   services.udisks2.enable = true;
+  services.thermald.enable = true;
 
   # Phone / MTP access (Android) + iPhone (usbmuxd)
   services.udev.packages = [ pkgs.libmtp ];
