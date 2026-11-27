@@ -246,7 +246,17 @@ in
 
   programs.dconf.enable = true;
   services.gvfs.enable = true;
+  # gvfsd-metadata can get stuck spinning on a core; cap it so it cannot heat the laptop.
+  systemd.user.services.gvfs-metadata = {
+    overrideStrategy = "asDropin";
+    serviceConfig = {
+      CPUQuota = "10%";
+      MemoryMax = "256M";
+      MemorySwapMax = "0";
+    };
+  };
   services.udisks2.enable = true;
+  services.thermald.enable = true;
 
   # Phone / MTP access (Android) + iPhone (usbmuxd)
   services.udev.packages = [ pkgs.libmtp ];
